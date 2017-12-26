@@ -1,10 +1,12 @@
 package com.example.google;
 
+import com.google.api.client.auth.oauth2.BearerToken;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
+import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
@@ -87,8 +89,8 @@ public class Quickstart {
 	 * @return an authorized Gmail client service
 	 * @throws IOException
 	 */
-	public static Gmail getGmailService() throws IOException {
-		Credential credential = authorize();
+	public static Gmail getGmailService(String accessToken) throws IOException {
+		Credential credential = new Credential(BearerToken.authorizationHeaderAccessMethod()).setAccessToken(accessToken);
 		return new Gmail.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential)
 				.setApplicationName(APPLICATION_NAME)
 				.build();
@@ -101,7 +103,7 @@ public class Quickstart {
 	 * @return
 	 * @throws IOException
 	 */
-	private static List<String> labels(Gmail service, String user) throws IOException {
+	public static List<String> labels(Gmail service, String user) throws IOException {
 		ListLabelsResponse listResponse = service.users().labels().list(user).execute();
 		List<Label> labels = listResponse.getLabels();
 		List<String> labelId = new ArrayList<>(labels.size());
